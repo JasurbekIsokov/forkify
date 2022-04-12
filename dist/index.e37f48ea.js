@@ -529,9 +529,18 @@ const timeout = function(s) {
 const showRecipe = async function() {
     const data = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`);
     const dataJSON = await data.json();
-    console.log(dataJSON);
     const obj = dataJSON.data.recipe;
-    console.log(obj);
+    // Malumotlarni saqlovchi obect.
+    const state = {
+        id: obj.id,
+        image: obj.image_url,
+        publisher: obj.publisher,
+        ingredients: obj.ingredients,
+        title: obj.title,
+        servings: obj.servings,
+        url: obj.source_url,
+        time: obj.cooking_time
+    };
 };
 showRecipe();
 
