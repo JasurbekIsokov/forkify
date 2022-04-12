@@ -60,7 +60,7 @@ const renderIng = function (ings) {
 // O'ng tomondagi malumotlarni render qilib chiqaruvch function
 const renderHtml = function (data) {
   const html = `<figure class="recipe__fig">
-  <img src="${data / image}" alt="${data.title}" class="recipe__img" />
+  <img src="${data.image}" alt="${data.title}" class="recipe__img" />
   <h1 class="recipe__title">
     <span>${data.title}</span>
   </h1>
@@ -141,3 +141,12 @@ const renderHtml = function (data) {
 
   recipeContainer.insertAdjacentHTML('afterbegin', html);
 };
+
+// url o'zgarganda ishlab ketishi uchun
+//window.addEventListener('hashchange', showRecipe); // url o'zgarganda uni olib showRecipe ga berib yubordik
+//window.addEventListener('load', showRecipe); // url bor bo'lsa uni chiqarish uchun showRecipe berish
+
+// ikki marta addEventListener qilmaslik uchun forda aylantiramiz
+['hashchange', 'load'].forEach(val => {
+  window.addEventListener(val, showRecipe);
+});
