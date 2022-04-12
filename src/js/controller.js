@@ -39,6 +39,10 @@ const showRecipe = async function () {
       url: obj.source_url,
       time: obj.cooking_time,
     };
+
+    recipeContainer.innerHTML = '';
+
+    renderHtml(state);
   } catch (Error) {
     alert(Error);
   }
