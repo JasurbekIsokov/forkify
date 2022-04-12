@@ -514,7 +514,11 @@ function hmrAcceptRun(bundle, id) {
 }
 
 },{}],"aenu9":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _iconsSvg = require("../img/icons.svg"); // Parcel1 parcelning 1-usuli
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 const { async  } = require('regenerator-runtime');
+// import icons from "url:../img/icons.svg" // Parcel2 parcelning 2-usulu
 const recipeContainer = document.querySelector('.recipe');
 const timeout = function(s) {
     return new Promise(function(_, reject) {
@@ -542,9 +546,9 @@ const showRecipe = async function() {
         time: obj.cooking_time
     };
 };
-showRecipe();
+showRecipe(); // O'ng tomondagi malumotlarni render qilib chiqaruvch function
 
-},{"regenerator-runtime":"dXNgZ"}],"dXNgZ":[function(require,module,exports) {
+},{"regenerator-runtime":"dXNgZ","../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -1109,6 +1113,73 @@ try {
     if (typeof globalThis === "object") globalThis.regeneratorRuntime = runtime;
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
+
+},{}],"cMpiy":[function(require,module,exports) {
+module.exports = require('./helpers/bundle-url').getBundleURL('hWUTQ') + "icons.21bad73c.svg" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"lgJ39":[function(require,module,exports) {
+"use strict";
+var bundleURL = {};
+function getBundleURLCached(id) {
+    var value = bundleURL[id];
+    if (!value) {
+        value = getBundleURL();
+        bundleURL[id] = value;
+    }
+    return value;
+}
+function getBundleURL() {
+    try {
+        throw new Error();
+    } catch (err) {
+        var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
+        if (matches) // The first two stack frames will be this function and getBundleURLCached.
+        // Use the 3rd one, which will be a runtime in the original bundle.
+        return getBaseURL(matches[2]);
+    }
+    return '/';
+}
+function getBaseURL(url) {
+    return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
+} // TODO: Replace uses with `new URL(url).origin` when ie11 is no longer supported.
+function getOrigin(url) {
+    var matches = ('' + url).match(/(https?|file|ftp):\/\/[^/]+/);
+    if (!matches) throw new Error('Origin not found');
+    return matches[0];
+}
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+exports.getOrigin = getOrigin;
+
+},{}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
 
 },{}]},["ddCAb","aenu9"], "aenu9", "parcelRequire3a11")
 
