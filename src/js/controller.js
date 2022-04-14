@@ -26,13 +26,14 @@ const showRecipe = async function () {
 
     recipeView.render(data);
   } catch (Error) {
-    recipeView.renderError();
+    recipeView.renderError(); // error berganda biz belgilagan yozuv ekranga chiqishi
     // alert(Error);
   }
 };
 
 showRecipe();
 
+// search qilganda ishlashi kerak bo'lgan function.
 const searchController = async function () {
   const inputValue = searchView.getQuery();
   await searchResults(inputValue);
@@ -42,6 +43,8 @@ const searchController = async function () {
   resultsView.render(data);
 };
 
+// serachView dagi functionni chaqirdik va unga argument sifatida controller.js
+// fayldagi functionni berib yubordik
 searchView.addHandlerEvent(searchController);
 
 recipeView.addHandlerEvent(showRecipe);

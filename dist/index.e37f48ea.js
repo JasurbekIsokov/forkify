@@ -535,21 +535,24 @@ const showRecipe = async function() {
         const data = _modelJs.state.recipe;
         _recipeViewJsDefault.default.render(data);
     } catch (Error) {
-        _recipeViewJsDefault.default.renderError();
+        _recipeViewJsDefault.default.renderError(); // error berganda biz belgilagan yozuv ekranga chiqishi
     // alert(Error);
     }
 };
 showRecipe();
+// search qilganda ishlashi kerak bo'lgan function.
 const searchController = async function() {
     const inputValue = _searchViewJsDefault.default.getQuery();
     await _modelJs.searchResults(inputValue);
     const data = _modelJs.state.search.results;
     _resultsViewJsDefault.default.render(data);
 };
+// serachView dagi functionni chaqirdik va unga argument sifatida controller.js
+// fayldagi functionni berib yubordik
 _searchViewJsDefault.default.addHandlerEvent(searchController);
 _recipeViewJsDefault.default.addHandlerEvent(showRecipe);
 
-},{"./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/resultsView.js":"cSbZE"}],"Y4A21":[function(require,module,exports) {
+},{"./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultsView.js":"cSbZE","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state
@@ -1434,13 +1437,15 @@ parcelHelpers.defineInteropFlag(exports);
 class SearchView {
     #parentElement = document.querySelector('.search');
     getQuery() {
-        const val = document.querySelector('.search__field').value;
+        const val = document.querySelector('.search__field').value; // search inputdagi user kiritgan value
         return val;
     }
+    // controller.js dagi functionni logica yo'li bilan viewda ishlatdik
+    // Publisher - subscribe pattern
     addHandlerEvent(handle) {
         this.#parentElement.addEventListener('submit', function(e) {
             e.preventDefault();
-            handle();
+            handle(); // controller.js dagi function(searchController)
         });
     }
 }
@@ -1488,6 +1493,6 @@ class ResultsView {
 }
 exports.default = new ResultsView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../img/icons.svg":"cMpiy"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire3a11")
+},{"../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["ddCAb","aenu9"], "aenu9", "parcelRequire3a11")
 
 //# sourceMappingURL=index.e37f48ea.js.map
