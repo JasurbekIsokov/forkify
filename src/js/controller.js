@@ -21,7 +21,10 @@ const showRecipe = async function () {
 
     const data = model.state.recipe;
 
-    recipeView.render(data);
+    // recipeView.render(data);
+    controllServings();
+
+    // Bookmark
   } catch (err) {
     recipeView.setError();
     throw err;
@@ -37,8 +40,6 @@ const searchController = async function () {
     const data = model.paginationLogic();
 
     paginationView.render(model.state.search);
-
-    resultsView.render(data);
   } catch (err) {
     searchView.setError();
     throw err;
@@ -60,11 +61,33 @@ const paginationController = async function (n) {
   }
 };
 
+//  Servings update
+
+const controllServings = function (servingsNum) {
+  model.updateServings(servingsNum);
+  console.log(model.state.recipe);
+
+  recipeView.render(model.state.recipe);
+};
+
+const controlBookmark = function () {
+  if (model.state.recipe.bookmarked) {
+    model.deleteBookmark(model.state.recipe.id);
+  } else {
+    model.addBookmark(model.state.recipe);
+  }
+
+  recipeView.render(model.state.recipe);
+};
+
+// ----------------------
+
 paginationView.addHandlerEvent(paginationController);
 
 searchView.addHandlerEvent(searchController);
 
 recipeView.addHandlerEvent(showRecipe);
 
-// controller ichidagi funksiyani view ga berish usuli
-// shu usulda malumot berib yuborsak boladi
+recipeView.addHandleServing(controllServings);
+
+recipeView.addHandleBookmark(controlBookmark);

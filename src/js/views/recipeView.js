@@ -42,6 +42,33 @@ class RecipeView {
     });
   }
 
+  // Pilus minus
+
+  addHandleServing(handle) {
+    this.#parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--tiny');
+      if (!btn) return;
+
+      const servingsNum = +btn.getAttribute('id');
+
+      if (servingsNum >= 1) {
+        handle(servingsNum);
+      }
+      // console.log(btn);
+      console.log(servingsNum);
+    });
+  }
+
+  addHandleBookmark(handle) {
+    this.#parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--round');
+      if (!btn) return;
+
+      console.log(btn);
+      handle();
+    });
+  }
+
   renderError() {
     const html = `<div class="error">
     <div>
@@ -104,12 +131,16 @@ class RecipeView {
     <span class="recipe__info-text">servings</span>
 
     <div class="recipe__info-buttons">
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--increase-servings" id=${
+        this.#data.servings - 1
+      }>
         <svg>
           <use href="${icons}#icon-minus-circle"></use>
         </svg>
       </button>
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--increase-servings" id=${
+        this.#data.servings + 1
+      }>
         <svg>
           <use href="${icons}#icon-plus-circle"></use>
         </svg>
@@ -124,7 +155,9 @@ class RecipeView {
   </div>
   <button class="btn--round">
     <svg class="">
-      <use href="${icons}#icon-bookmark-fill"></use>
+      <use href="${icons}#icon-bookmark${
+      this.#data.bookmarked ? '-fill' : ''
+    }"></use>
     </svg>
   </button>
 </div>

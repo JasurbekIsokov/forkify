@@ -534,7 +534,9 @@ const showRecipe = async function() {
         _recipeViewJsDefault.default.loadingSpinner();
         await _modelJs.loadRecipe(id);
         const data = _modelJs.state.recipe;
-        _recipeViewJsDefault.default.render(data);
+        // recipeView.render(data);
+        controllServings();
+    // Bookmark
     } catch (err) {
         _recipeViewJsDefault.default.setError();
         throw err;
@@ -546,7 +548,6 @@ const searchController = async function() {
         await _modelJs.searchResults(inputValue);
         const data = _modelJs.paginationLogic();
         _paginationViewJsDefault.default.render(_modelJs.state.search);
-        _resultsViewJsDefault.default.render(data);
     } catch (err) {
         _searchViewJsDefault.default.setError();
         throw err;
@@ -563,10 +564,23 @@ const paginationController = async function(n) {
         throw err;
     }
 };
+//  Servings update
+const controllServings = function(servingsNum) {
+    _modelJs.updateServings(servingsNum);
+    console.log(_modelJs.state.recipe);
+    _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+};
+const controlBookmark = function() {
+    if (_modelJs.state.recipe.bookmarked) _modelJs.deleteBookmark(_modelJs.state.recipe.id);
+    else _modelJs.addBookmark(_modelJs.state.recipe);
+    _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+};
+// ----------------------
 _paginationViewJsDefault.default.addHandlerEvent(paginationController);
 _searchViewJsDefault.default.addHandlerEvent(searchController);
-_recipeViewJsDefault.default.addHandlerEvent(showRecipe); // controller ichidagi funksiyani view ga berish usuli
- // shu usulda malumot berib yuborsak boladi
+_recipeViewJsDefault.default.addHandlerEvent(showRecipe);
+_recipeViewJsDefault.default.addHandleServing(controllServings);
+_recipeViewJsDefault.default.addHandleBookmark(controlBookmark);
 
 },{"./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultsView.js":"cSbZE","./views/paginationView.js":"6z7bi","regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -579,6 +593,12 @@ parcelHelpers.export(exports, "searchResults", ()=>searchResults
 );
 parcelHelpers.export(exports, "paginationLogic", ()=>paginationLogic
 );
+parcelHelpers.export(exports, "updateServings", ()=>updateServings
+);
+parcelHelpers.export(exports, "addBookmark", ()=>addBookmark
+);
+parcelHelpers.export(exports, "deleteBookmark", ()=>deleteBookmark
+);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helperJs = require("./helper.js");
@@ -589,7 +609,8 @@ const state = {
         results: {},
         page: 1,
         perPage: _configJs.RES_PER_PAGE
-    }
+    },
+    bookmark: []
 };
 const loadRecipe = async function(id) {
     try {
@@ -606,6 +627,8 @@ const loadRecipe = async function(id) {
             url: obj.source_url,
             time: obj.cooking_time
         };
+        if (state.bookmark.some((val)=>val.id === state.recipe.id
+        )) state.recipe.bookmarked = true;
     } catch (Error) {
         throw Error;
     }
@@ -634,6 +657,23 @@ const paginationLogic = function(page = state.search.page) {
     const start = (page - 1) * state.search.perPage;
     const and = page * state.search.perPage;
     return state.search.results.slice(start, and);
+};
+const updateServings = function(peopleNumber = state.recipe.servings) {
+    state.recipe.ingredients.map((val)=>{
+        val.quantity = val.quantity * peopleNumber / state.recipe.servings;
+    });
+    state.recipe.servings = peopleNumber;
+};
+const addBookmark = function(recipe) {
+    state.bookmark.push(recipe);
+    console.log(state.bookmark);
+    state.recipe.bookmarked = true;
+};
+const deleteBookmark = function(id) {
+    const index = state.bookmark.findIndex((val)=>val.id === id
+    );
+    state.bookmark.splice(index, 1);
+    state.recipe.bookmarked = false;
 };
 
 },{"regenerator-runtime":"dXNgZ","./config.js":"k5Hzs","./helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
@@ -1314,6 +1354,25 @@ class RecipeView {
             window.addEventListener(val, data);
         });
     }
+    // Pilus minus
+    addHandleServing(handle) {
+        this.#parentElement.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--tiny');
+            if (!btn) return;
+            const servingsNum = +btn.getAttribute('id');
+            if (servingsNum >= 1) handle(servingsNum);
+            // console.log(btn);
+            console.log(servingsNum);
+        });
+    }
+    addHandleBookmark(handle) {
+        this.#parentElement.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--round');
+            if (!btn) return;
+            console.log(btn);
+            handle();
+        });
+    }
     renderError() {
         const html = `<div class="error">
     <div>
@@ -1367,12 +1426,12 @@ class RecipeView {
     <span class="recipe__info-text">servings</span>
 
     <div class="recipe__info-buttons">
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--increase-servings" id=${this.#data.servings - 1}>
         <svg>
           <use href="${_iconsSvgDefault.default}#icon-minus-circle"></use>
         </svg>
       </button>
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--increase-servings" id=${this.#data.servings + 1}>
         <svg>
           <use href="${_iconsSvgDefault.default}#icon-plus-circle"></use>
         </svg>
@@ -1387,7 +1446,7 @@ class RecipeView {
   </div>
   <button class="btn--round">
     <svg class="">
-      <use href="${_iconsSvgDefault.default}#icon-bookmark-fill"></use>
+      <use href="${_iconsSvgDefault.default}#icon-bookmark${this.#data.bookmarked ? '-fill' : ''}"></use>
     </svg>
   </button>
 </div>
@@ -1526,45 +1585,6 @@ exports.default = new ResultsView();
 },{"../../img/icons.svg":"cMpiy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6z7bi":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-// import icons from '../../img/icons.svg'; // Parcel1 parcelning 1-usuli
-// class PaginationView {
-//   #parentElement = document.querySelector('.pagination');
-//   #data;
-//   render(data) {
-//     this.#data = data;
-//   }
-//   addHandlerEvent(handle) {
-//     this.#parentElement.addEventListener('click', function (e) {
-//       if (e.target.closest('.btn--inline')) {
-//         handle();
-//       }
-//     });
-//   }
-//   #generateHtml() {
-//     const currentPage = this.#data.page;
-//     const endPage = Math.ceil(this.#data.results.length / this.#data.perPage);
-//     this.#parentElement.innerHTML = '';
-//     const btnPrev = `<button class="btn--inline pagination__btn--prev">
-//   <svg class="search__icon">
-//     <use href="${icons}.svg#icon-arrow-left"></use>
-//   </svg>
-//   <span>Page ${currentPage - 1}</span>
-// </button>`;
-//     const btnNext = `<button class="btn--inline pagination__btn--next">
-//   <span>Page ${currentPage + 1}</span>
-//   <svg class="search__icon">
-//     <use href="${icons}.svg#icon-arrow-right"></use>
-//   </svg>
-// </button>`;
-//     if (currentPage > 1) {
-//       this.#parentElement.insertAdjacentHTML('afterbegin', btnPrev);
-//     }
-//     if (endPage > currentPage) {
-//       this.#parentElement.insertAdjacentHTML('beforeend', btnNext);
-//     }
-//   }
-// }
-// export default new PaginationView();
 var _iconsSvg = require("../../img/icons.svg"); // Parcel 1-versiya
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class PaginationView {
