@@ -1,50 +1,94 @@
-import icons from '../../img/icons.svg'; // Parcel1 parcelning 1-usuli
+// import icons from '../../img/icons.svg'; // Parcel1 parcelning 1-usuli
+
+// class PaginationView {
+//   #parentElement = document.querySelector('.pagination');
+
+//   #data;
+
+//   render(data) {
+//     this.#data = data;
+//   }
+
+//   addHandlerEvent(handle) {
+//     this.#parentElement.addEventListener('click', function (e) {
+//       if (e.target.closest('.btn--inline')) {
+//         handle();
+//       }
+//     });
+//   }
+
+//   #generateHtml() {
+//     const currentPage = this.#data.page;
+//     const endPage = Math.ceil(this.#data.results.length / this.#data.perPage);
+
+//     this.#parentElement.innerHTML = '';
+//     const btnPrev = `<button class="btn--inline pagination__btn--prev">
+//   <svg class="search__icon">
+//     <use href="${icons}.svg#icon-arrow-left"></use>
+//   </svg>
+//   <span>Page ${currentPage - 1}</span>
+// </button>`;
+
+//     const btnNext = `<button class="btn--inline pagination__btn--next">
+//   <span>Page ${currentPage + 1}</span>
+//   <svg class="search__icon">
+//     <use href="${icons}.svg#icon-arrow-right"></use>
+//   </svg>
+// </button>`;
+//     if (currentPage > 1) {
+//       this.#parentElement.insertAdjacentHTML('afterbegin', btnPrev);
+//     }
+//     if (endPage > currentPage) {
+//       this.#parentElement.insertAdjacentHTML('beforeend', btnNext);
+//     }
+//   }
+// }
+
+// export default new PaginationView();
+
+import icons from '../../img/icons.svg'; // Parcel 1-versiya
 
 class PaginationView {
   #parentElement = document.querySelector('.pagination');
-
   #data;
 
   render(data) {
     this.#data = data;
+    this.#generateHtml();
   }
-
   addHandlerEvent(handle) {
     this.#parentElement.addEventListener('click', function (e) {
-      if (e.target.closest('.btn--inline')) {
-        handle();
+      if (e.target.closest('.pagination__btn--next')) {
+        handle(1);
+      }
+      if (e.target.closest('.pagination__btn--prev')) {
+        handle(2);
       }
     });
   }
-
   #generateHtml() {
     const currentPage = this.#data.page;
-    const endpage = Math.ceil(this.#data.results.length / this.#data.perPage);
+    const endPage = Math.ceil(this.#data.results.length / this.#data.perPage);
 
-    const btnPre = `
-    <button class="btn--inline pagination__btn--prev">
+    this.#parentElement.innerHTML = '';
+    const btnPrev = `<button class="btn--inline pagination__btn--prev">
     <svg class="search__icon">
-      <use href="${icons}#icon-arrow-left"></use>
+      <use href="${icons}.svg#icon-arrow-left"></use>
     </svg>
-    <span>Page 1</span>
+    <span>Page ${currentPage - 1}</span>
   </button>`;
 
-    const btnNext = `
-    <button class="btn--inline pagination__btn--next">
-    <span>Page 3</span>
+    const btnNext = `<button class="btn--inline pagination__btn--next">
+    <span>Page ${currentPage + 1}</span>
     <svg class="search__icon">
-      <use href="${icons}#icon-arrow-right"></use>
+      <use href="${icons}.svg#icon-arrow-right"></use>
     </svg>
   </button>`;
-
     if (currentPage > 1) {
-      this.#parentElement.innerHTML = '';
-      this.#parentElement.insertAdjacentHTML('afterbegin', btnPre);
+      this.#parentElement.insertAdjacentHTML('afterbegin', btnPrev);
     }
-
-    if (endpage > currentPage) {
-      this.#parentElement.innerHTML = '';
-      this.#parentElement.insertAdjacentHTML('afterbegin', btnNext);
+    if (endPage > currentPage) {
+      this.#parentElement.insertAdjacentHTML('beforeend', btnNext);
     }
   }
 }

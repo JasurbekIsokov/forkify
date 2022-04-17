@@ -1,24 +1,15 @@
 const { async } = require('regenerator-runtime');
 
-const recipeContainer = document.querySelector('.recipe');
-
-// loadRecipe ni import qildik model faylidan
-import { loadRecipe, state } from './model.js';
-
-import { paginationLogic } from './model.js';
-
+import * as model from './model.js';
 import recipeView from './views/recipeView.js';
-
 import searchView from './views/searchView.js';
-
-import { searchResults } from './model.js';
-
 import resultsView from './views/resultsView.js';
-import { result } from 'lodash';
-
 import paginationView from './views/paginationView.js';
 
-// Bitta taom retseptini oluvchi funcsiya
+// https://forkify-api.herokuapp.com/v2
+
+///////////////////////////////////////
+
 const showRecipe = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -26,46 +17,54 @@ const showRecipe = async function () {
 
     recipeView.loadingSpinner();
 
-    await loadRecipe(id);
-    const data = state.recipe;
+    await model.loadRecipe(id);
+
+    const data = model.state.recipe;
 
     recipeView.render(data);
-  } catch (Error) {
-    recipeView.renderError(); // error berganda biz belgilagan yozuv ekranga chiqishi
-    // alert(Error);
+  } catch (err) {
+    recipeView.setError();
+    throw err;
   }
 };
 
-showRecipe();
-
-// search qilganda ishlashi kerak bo'lgan function.
 const searchController = async function () {
   try {
     const inputValue = searchView.getQuery();
-    await searchResults(inputValue);
 
-    // const data = state.search.results;
+    await model.searchResults(inputValue);
 
-    const data = paginationLogic(2);
-    console.log(data);
+    const data = model.paginationLogic();
+
+    paginationView.render(model.state.search);
+
     resultsView.render(data);
-    paginationView.render(state.search.page);
-  } catch (er) {
-    throw er;
+  } catch (err) {
+    searchView.setError();
+    throw err;
   }
 };
 
-// serachView dagi functionni chaqirdik va unga argument sifatida controller.js
-// fayldagi functionni berib yubordik
+const paginationController = async function (n) {
+  try {
+    if (n === 1) {
+      ++model.state.search.page;
+    } else {
+      --model.state.search.page;
+    }
+    const data = model.paginationLogic();
+    paginationView.render(model.state.search);
+    resultsView.render(data);
+  } catch (err) {
+    throw err;
+  }
+};
+
+paginationView.addHandlerEvent(paginationController);
+
 searchView.addHandlerEvent(searchController);
 
 recipeView.addHandlerEvent(showRecipe);
 
-const paginationController = async function () {
-  try {
-    const data = paginationLogic();
-    resultsView.render(data);
-  } catch (er) {
-    alert(er);
-  }
-};
+// controller ichidagi funksiyani view ga berish usuli
+// shu usulda malumot berib yuborsak boladi
